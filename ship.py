@@ -19,8 +19,7 @@ class Ship:
         self.is_live = True
 
     def __set_ship_rotation(self) -> str:
-        if self.length > 1:
-            return random.choice(["horisontal", "vertical"])
+        return random.choice(["horisontal", "vertical"]) if self.length > 1 else None
 
     def __set_ship_coordinates(self) -> Coordinates:
         if all([self.length > 1, self.rotation == "horisontal"]):
@@ -40,7 +39,7 @@ class Ship:
         return Coordinates(row_start, row_end, col_start, col_end)
 
     def __str__(self) -> str:
-        return f"This ship is at " \
+        return f"This ship loc at " \
                f"coordinates={self.coordinates}, " \
                f"len={self.length}, " \
                f"is_live={self.is_live}, " \
