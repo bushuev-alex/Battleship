@@ -50,6 +50,7 @@ class Field:
                     n += 1
                     if n > 30:  # check if there is no proper place for next ship / infinite cycle
                         self.field = np.asarray([[' ' for _ in range(6)] for _ in range(6)])
+                        self.ships = []
                         return self.generate_ships()
 
 

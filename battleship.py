@@ -67,6 +67,20 @@ class Battleship:
             print(n + 1, '|', *row, '|')
         print('  ---------------')
 
+    def draw_fields_(self, player: str) -> None:
+        player_ = self.players.get(player)
+        opponent = self.get_opponent(player)
+        opponent_ = self.players.get(opponent)
+
+        print(f"\n     {player} Field", ' ', ' ', ' ', ' ', f"   {opponent} Field")
+        print(' ', ' ', '1', '2', '3', '4', '5', '6', ' ', ' ', ' ', ' ', '1', '2', '3', '4', '5', '6')
+        print('  ---------------', ' ', ' ', '  ---------------')
+        field = player_.player_field
+        opponent_field = opponent_.hiding_field
+        for n, rows in enumerate(zip(field, opponent_field)):
+            print(n + 1, '|', *rows[0], '|', ' ', ' ', n + 1, '|', *rows[1], '|')
+        print('  ---------------', ' ', ' ', '  ---------------')
+
     def get_new_coordinates(self, player: str) -> ShotCoordinates:
         player_: Gamer = self.players.get(player)
         while True:
@@ -77,10 +91,10 @@ class Battleship:
                     print("Coordinates should be from 1 to 6!")
 
                     continue
-                if player_.opponent_field[row-1, col-1] in ['X', '*', "■"]:
+                if player_.opponent_field[row - 1, col - 1] in ['X', '*', "■"]:
                     print('This cell is already shot! Choose another one!')
                     continue
-                return ShotCoordinates(row-1, col-1)
+                return ShotCoordinates(row - 1, col - 1)
             except ValueError:
                 print("You should enter 2 numbers!")
 
@@ -89,16 +103,19 @@ class Battleship:
         col = coordinates.col
         for ship in opponent.ships:
             # find right ship:
-            if not (row in range(ship.coordinates.row_start, ship.coordinates.row_end + 1)) \
-                    and (col in range(ship.coordinates.col_start, ship.coordinates.col_end + 1)):
+            condition = (row in range(ship.coordinates.row_start, ship.coordinates.row_end + 1) and
+                         (col in range(ship.coordinates.col_start, ship.coordinates.col_end + 1)))
+            if not condition:
                 continue
             ship_dots = ship.get_dots(opponent.player_field)
             if "O" not in ship_dots:
                 opponent.player_field[ship.coordinates.row_start:ship.coordinates.row_end + 1,
-                                      ship.coordinates.col_start, ship.coordinates.col_end + 1] = "■"
+                                      ship.coordinates.col_start:ship.coordinates.col_end + 1] = "■"
                 opponent.hiding_field[ship.coordinates.row_start:ship.coordinates.row_end + 1,
-                                      ship.coordinates.col_start, ship.coordinates.col_end + 1] = "■"
-            break
+                                      ship.coordinates.col_start:ship.coordinates.col_end + 1] = "■"
+                ship.is_live = False
+                print("THE SHIP IS KILLED!")
+                break
 
     def make_move(self, coordinates: ShotCoordinates, player: str):
         row = coordinates.row
@@ -107,10 +124,19 @@ class Battleship:
         if opponent.player_field[row, col] == "O":
             opponent.player_field[row, col] = "X"
             opponent.hiding_field[row, col] = "X"
+            print("THE SHIP IS DAMAGED")
             self.check_ship_is_live(coordinates, opponent)
         else:
             opponent.player_field[row, col] = "*"
             opponent.hiding_field[row, col] = "*"
+            print("OVERSHOT.")
+
+    def get_game_status(self, user_player: Gamer, ai_player: Gamer) -> str:
+        if all(map(lambda x: not x, [ship.is_live for ship in user_player.ships])):
+            return "USER WINS!"
+        if all(map(lambda x: not x, [ship.is_live for ship in ai_player.ships])):
+            return "AI WINS!"
+        return "Game not finished"
 
     def change_player(self):
         self.player_to_move = "USER" if self.player_to_move == "AI" else "AI"
@@ -119,5 +145,5 @@ class Battleship:
 if __name__ == "__main__":
     game = Battleship("user", "ai_player")
     game.create_fields()
-    #game.draw_fields(game.)
-    #game.draw_ai_field()
+    # game.draw_fields(game.)
+    # game.draw_ai_field()

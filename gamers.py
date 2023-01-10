@@ -42,7 +42,8 @@ class AIGamer(Gamer):
 
     def ask_coordinates(self):
         super().ask_coordinates()
-        x, y = random.randrange(1, 6), random.randrange(1, 6)
+        x, y = random.randint(1, 6), random.randint(1, 6)
+        print(f"AI shot coordinates: {x}, {y}")
         return x, y
 
 

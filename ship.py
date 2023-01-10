@@ -31,9 +31,10 @@ class Ship:
             col_end, row_end = col_start, row_start
         return ShipCoordinates(row_start, row_end, col_start, col_end)
 
-    def get_dots(self, field: np.ndarray) -> str:
-        return "".join(field[self.coordinates.row_start:self.coordinates.row_end+1,
-                             self.coordinates.col_start:self.coordinates.col_end+1][0])
+    def get_dots(self, field: np.ndarray) -> np.ndarray:
+        ship_array = field[self.coordinates.row_start:self.coordinates.row_end+1,
+                             self.coordinates.col_start:self.coordinates.col_end+1]
+        return ship_array
 
     def __str__(self) -> str:
         return f"This ship loc at " \
