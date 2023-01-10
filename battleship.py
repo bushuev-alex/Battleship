@@ -133,9 +133,9 @@ class Battleship:
 
     def get_game_status(self, user_player: Gamer, ai_player: Gamer) -> str:
         if all(map(lambda x: not x, [ship.is_live for ship in user_player.ships])):
-            return "USER WINS!"
-        if all(map(lambda x: not x, [ship.is_live for ship in ai_player.ships])):
             return "AI WINS!"
+        if all(map(lambda x: not x, [ship.is_live for ship in ai_player.ships])):
+            return "USER WINS!"
         return "Game not finished"
 
     def change_player(self):
