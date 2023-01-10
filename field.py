@@ -7,6 +7,7 @@ class Field:
     def __init__(self):
         self.ship_quantity = {"3": 1, "2": 2, "1": 4}
         self.field = np.asarray([[' ' for _ in range(6)] for _ in range(6)])
+        self.hiding_field = np.asarray([[' ' for _ in range(6)] for _ in range(6)])
         self.ships = []
 
     def __check_border_around_ship(self, ship: Ship) -> bool:
@@ -25,7 +26,7 @@ class Field:
             return True
         return False
 
-    def __insert_in_field(self, ship: Ship) -> None:
+    def __insert_ship_in_field(self, ship: Ship) -> None:
         self.field[ship.coordinates.row_start:ship.coordinates.row_end + 1,
                    ship.coordinates.col_start:ship.coordinates.col_end + 1] = "O"
 
@@ -43,11 +44,11 @@ class Field:
                     if self.__check_cell_is_busy(ship):
                         continue
                     if self.__check_border_around_ship(ship):
-                        self.__insert_in_field(ship)
+                        self.__insert_ship_in_field(ship)
                         self.ships.append(ship)
                         break
                     n += 1
-                    if n > 50:
+                    if n > 30:  # check if there is no proper place for next ship / infinite cycle
                         self.field = np.asarray([[' ' for _ in range(6)] for _ in range(6)])
                         return self.generate_ships()
 
@@ -56,4 +57,3 @@ if __name__ == "__main__":
     field = Field()
     field.generate_ships()
     print(field.field)
-

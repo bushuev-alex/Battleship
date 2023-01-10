@@ -1,0 +1,2 @@
+class OutOfBoardException(Exception):
+    print("")
