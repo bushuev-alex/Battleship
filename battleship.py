@@ -41,23 +41,6 @@ class Battleship:
 
     def draw_fields(self, player: Gamer) -> None:
         opponent = self.get_opponent(player)
-        print(f"\n  {player.name} Field")
-        print(' ', ' ', '1', '2', '3', '4', '5', '6')
-        print('  ---------------')
-        for n, row in enumerate(player.player_field):
-            print(n + 1, '|', *row, '|')
-        print('  ---------------')
-
-        print(f"\n  {opponent.name} Field")
-        print(' ', ' ', '1', '2', '3', '4', '5', '6')
-        print('  ---------------')
-        for n, row in enumerate(opponent.hiding_field):
-            print(n + 1, '|', *row, '|')
-        print('  ---------------')
-
-
-    def draw_fields_(self, player: Gamer) -> None:
-        opponent = self.get_opponent(player)
 
         print(f"\n     {player.name} Field", ' ', ' ', ' ', ' ', f"   {opponent.name} Field")
         print(' ', ' ', '1', '2', '3', '4', '5', '6', ' ', ' ', ' ', ' ', ' ', '1', '2', '3', '4', '5', '6')
