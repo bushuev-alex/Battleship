@@ -11,6 +11,7 @@ class Gamer:
         self.opponent_field = None
         self.hiding_field = None
         self.ships = None
+        self.name = None
 
     def ask_coordinates(self):
         pass
@@ -23,10 +24,10 @@ class UserGamer(Gamer):
         self.player_field = user_field.field
         self.opponent_field = ai_field.field
         self.hiding_field = ai_field.hiding_field
-        self.ships = user_field.ships
+        self.ships = user_field.generate_ships()
+        self.name = "USER"
 
     def ask_coordinates(self):
-        super().ask_coordinates()
         x, y = [int(i) for i in input("Enter shot coordinates: ").split()]
         return x, y
 
@@ -38,10 +39,10 @@ class AIGamer(Gamer):
         self.player_field = ai_field.field
         self.opponent_field = user_field.field
         self.hiding_field = user_field.hiding_field
-        self.ships = ai_field.ships
+        self.ships = ai_field.generate_ships()
+        self.name = "AI"
 
     def ask_coordinates(self):
-        super().ask_coordinates()
         x, y = random.randint(1, 6), random.randint(1, 6)
         print(f"AI shot coordinates: {x}, {y}")
         return x, y
