@@ -1,3 +1,5 @@
+import numpy as np
+
 from field import Field
 from gamers import Gamer, UserGamer, AIGamer
 from game_dataclasses import ShotCoordinates
@@ -6,23 +8,21 @@ from exceptions import *
 
 class Battleship:
 
-    def __init__(self, player: str, opponent: str):
-        self.players = {player: None, opponent: None}
-        self.player_to_move: Gamer = None
-
-    def set_player_to_move(self, player: Gamer):
-        self.player_to_move = player
+    def __init__(self):
+        # create field objects and ships in them:
+        self.user_field = Field()
+        self.user_field.generate_ships()
+        self.ai_field = Field()
+        self.ai_field.generate_ships()
 
     def create_players(self) -> tuple[Gamer, Gamer]:
-        # create field objects:
-        user_field = Field()
-        ai_field = Field()
         # create players
-        user_player = UserGamer(user_field, ai_field)
-        ai_player = AIGamer(user_field, ai_field)
+        user_player = UserGamer(self.user_field)
+        ai_player = AIGamer(self.ai_field)
 
-        self.players["USER"] = user_player
-        self.players["AI"] = ai_player
+        user_player.set_opponent(ai_player)
+        ai_player.set_opponent(user_player)
+
         return user_player, ai_player
 
     def greet(self) -> None:
@@ -36,20 +36,21 @@ class Battleship:
         print("  y - col number ")
         print("-----------------\n")
 
-    def get_opponent(self, player: Gamer) -> Gamer:
-        return self.players["USER"] if player.name == "AI" else self.players["AI"]
-
     def draw_fields(self, player: Gamer) -> None:
-        opponent = self.get_opponent(player)
+        hiding_field = player.opponent.player_field.copy()
+        hiding_field[hiding_field == "O"] = " "  # np.array
 
-        print(f"\n     {player.name} Field", ' ', ' ', ' ', ' ', f"   {opponent.name} Field")
+        print(f"\n     {player.name} Field", ' ', ' ', ' ', ' ', f"   {player.opponent.name} Field")
         print(' ', ' ', '1', '2', '3', '4', '5', '6', ' ', ' ', ' ', ' ', ' ', '1', '2', '3', '4', '5', '6')
         print('  ---------------', ' ', ' ', '  ---------------')
-        for n, rows in enumerate(zip(player.player_field, opponent.hiding_field)):
+
+        for n, rows in enumerate(zip(player.player_field, hiding_field)):
             print(n + 1, '|', *rows[0], '|', ' ', ' ', n + 1, '|', *rows[1], '|')
+
         print('  ---------------', ' ', ' ', '  ---------------')
 
-    def get_new_coordinates(self, player: Gamer) -> ShotCoordinates:
+    @staticmethod
+    def get_new_coordinates(player: Gamer) -> ShotCoordinates:
         while True:
             try:
                 row, col = player.ask_coordinates()
@@ -57,59 +58,53 @@ class Battleship:
                 if not (1 <= row <= 6 and 1 <= col <= 6):
                     print("Coordinates should be from 1 to 6!")
                     continue
-                if player.opponent_field[row - 1, col - 1] in ['X', '*', "■"]:
+                if player.opponent.player_field[row - 1, col - 1] in ['X', '*', "■"]:
                     print('This cell is already shot! Choose another one!')
                     continue
                 return ShotCoordinates(row - 1, col - 1)
             except ValueError:
                 print("You should enter 2 numbers!")
 
-    def check_ship_is_live(self, coordinates: ShotCoordinates, opponent: Gamer) -> None:
+    @staticmethod
+    def check_ship_is_live(coordinates: ShotCoordinates, opponent: Gamer) -> None:
         row = coordinates.row
         col = coordinates.col
         for ship in opponent.ships:
             # find right ship:
             condition = (row in range(ship.coordinates.row_start, ship.coordinates.row_end + 1) and
                          (col in range(ship.coordinates.col_start, ship.coordinates.col_end + 1)))
-            if not condition:
+            if not condition:  # dot (row, col) not in ship's coordinates
                 continue
-            ship_dots = ship.get_dots(opponent.player_field)
-            if "O" not in ship_dots:
+            ship_dots: np.ndarray = ship.get_dots(opponent.player_field)
+            if "O" not in ship_dots:  # all dots == "X"
                 opponent.player_field[ship.coordinates.row_start:ship.coordinates.row_end + 1,
                                       ship.coordinates.col_start:ship.coordinates.col_end + 1] = "■"
-                opponent.hiding_field[ship.coordinates.row_start:ship.coordinates.row_end + 1,
-                                      ship.coordinates.col_start:ship.coordinates.col_end + 1] = "■"
-                ship.is_live = False
+                ship.is_killed = True
                 print("THE SHIP IS KILLED!")
                 break
 
-    def make_move(self, coordinates: ShotCoordinates, player: Gamer) -> None:
+    def make_shot(self, coordinates: ShotCoordinates, player: Gamer) -> bool:
         row = coordinates.row
         col = coordinates.col
-        opponent = self.get_opponent(player)
-        if opponent.player_field[row, col] == "O":
-            opponent.player_field[row, col] = "X"
-            opponent.hiding_field[row, col] = "X"
+        if player.opponent.player_field[row, col] == "O":
+            player.opponent.player_field[row, col] = "X"
             print("THE SHIP IS DAMAGED")
-            self.check_ship_is_live(coordinates, opponent)
+            self.check_ship_is_live(coordinates, player.opponent)
+            return True
         else:
-            opponent.player_field[row, col] = "*"
-            opponent.hiding_field[row, col] = "*"
+            player.opponent.player_field[row, col] = "*"
             print("OVERSHOT!")
+            return False
 
-    def get_game_status(self, user_player: Gamer, ai_player: Gamer) -> str:
-        if all(map(lambda x: not x, [ship.is_live for ship in user_player.ships])):
+    @staticmethod
+    def get_game_status(user_player: Gamer, ai_player: Gamer) -> str:
+        if all(map(lambda x: x.is_killed, [ship for ship in user_player.ships])):
             return "AI WINS!"
-        if all(map(lambda x: not x, [ship.is_live for ship in ai_player.ships])):
+        if all(map(lambda x: x.is_killed, [ship for ship in ai_player.ships])):
             return "USER WINS!"
         return "Game not finished"
 
-    def change_player(self):
-        self.player_to_move = self.players["USER"] if self.player_to_move.name == "AI" else self.players["AI"]
-
 
 if __name__ == "__main__":
-    game = Battleship("user", "ai_player")
-    # game.create_fields()
-    # game.draw_fields(game.)
-    # game.draw_ai_field()
+    game = Battleship()
+

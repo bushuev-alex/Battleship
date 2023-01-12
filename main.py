@@ -1,21 +1,22 @@
 from battleship import Battleship
 
 
-my_game = Battleship("USER", "AI")
-user_player, ai_player = my_game.create_players()
-my_game.set_player_to_move(user_player)
+game = Battleship()
+user_player, ai_player = game.create_players()
 
-my_game.greet()
-my_game.draw_fields(my_game.player_to_move)
+player_to_move = user_player
+game.greet()
+game.draw_fields(user_player)
 
 while True:
-    print(f"\n'{my_game.player_to_move}' moves")
-    coordinates = my_game.get_new_coordinates(my_game.player_to_move)
-    my_game.make_move(coordinates, my_game.player_to_move)
-    my_game.draw_fields(my_game.player_to_move)
-
-    status = my_game.get_game_status(user_player, ai_player)
+    print(f"\n'{player_to_move.name}' moves")
+    coordinates = game.get_new_coordinates(player_to_move)
+    shot_result = game.make_shot(coordinates, player_to_move)
+    game.draw_fields(user_player)
+    status = game.get_game_status(user_player, ai_player)
     if status != 'Game not finished':
         print(status)
         break
-    my_game.change_player()
+    if shot_result:  # True (DAMAGE, no player change) or False (OVERSHOT, then change player)
+        continue
+    player_to_move = player_to_move.opponent

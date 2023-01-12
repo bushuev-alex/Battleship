@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import NamedTuple
 
 
 @dataclass(slots=True, frozen=True)
@@ -9,7 +10,6 @@ class ShipCoordinates:
     col_end: int
 
 
-@dataclass(slots=True, frozen=True)
-class ShotCoordinates:
+class ShotCoordinates(NamedTuple):
     row: int
     col: int

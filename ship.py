@@ -9,7 +9,7 @@ class Ship:
         self.length = length
         self.rotation = self.__set_ship_rotation()
         self.coordinates = self.__set_ship_coordinates()
-        self.is_live = True
+        self.is_killed = False
 
     def __set_ship_rotation(self) -> str:
         return random.choice(["horisontal", "vertical"]) if self.length > 1 else None
@@ -33,14 +33,14 @@ class Ship:
 
     def get_dots(self, field: np.ndarray) -> np.ndarray:
         ship_array = field[self.coordinates.row_start:self.coordinates.row_end+1,
-                             self.coordinates.col_start:self.coordinates.col_end+1]
+                           self.coordinates.col_start:self.coordinates.col_end+1]
         return ship_array
 
     def __str__(self) -> str:
         return f"This ship loc at " \
                f"coordinates={self.coordinates}, " \
                f"len={self.length}, " \
-               f"is_live={self.is_live}, " \
+               f"is_live={self.is_killed}, " \
                f"rot={self.rotation}"
 
 
