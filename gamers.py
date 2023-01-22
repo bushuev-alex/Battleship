@@ -1,9 +1,10 @@
+from abc import ABC
 import random
 from field import Field
 from game_dataclasses import ShotCoordinates
 
 
-class Gamer:
+class Gamer(ABC):
 
     def __init__(self, player_field: Field):
         self.player_field = None
@@ -28,8 +29,8 @@ class UserGamer(Gamer):
         self.opponent = None
 
     def ask_coordinates(self) -> ShotCoordinates:
-        x, y = [int(i) for i in input("Enter shot coordinates: ").split()]
-        return ShotCoordinates(x, y)
+        row, col = [int(i) for i in input("Enter shot coordinates: ").split()]
+        return ShotCoordinates(row, col)
 
     def __str__(self):
         return f"name = {self.name}\n" \
@@ -47,9 +48,9 @@ class AIGamer(Gamer):
         self.opponent = None
 
     def ask_coordinates(self) -> ShotCoordinates:
-        x, y = random.randint(1, 6), random.randint(1, 6)
-        print(f"AI shot coordinates: {x}, {y}")
-        return ShotCoordinates(x, y)
+        row, col = random.randint(1, 6), random.randint(1, 6)
+        print(f"AI shot coordinates: {row}, {col}")
+        return ShotCoordinates(row, col)
 
     def __str__(self):
         return f"name = {self.name}\n" \

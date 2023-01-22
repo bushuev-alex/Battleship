@@ -17,6 +17,5 @@ while True:
     if status != 'Game not finished':
         print(status)
         break
-    if shot_result:  # True (DAMAGE, no player change) or False (OVERSHOT, then change player)
-        continue
-    player_to_move = player_to_move.opponent
+    if not shot_result:  # shot_result is True (DAMAGE, no player change) or False (OVERSHOT, then change player)
+        player_to_move = player_to_move.opponent

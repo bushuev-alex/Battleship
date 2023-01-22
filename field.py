@@ -21,7 +21,7 @@ class Field:
         row_lower = field_[ship.coordinates.row_end+1+1,
                            ship.coordinates.col_start+1-1:ship.coordinates.col_end+1+2]
         border_lines = list(col_left) + list(col_right) + list(row_upper) + list(row_lower)
-        if all(map(lambda x: x == " ", border_lines)):
+        if all((x == " " for x in border_lines)):
             return True
         return False
 

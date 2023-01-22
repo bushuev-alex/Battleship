@@ -31,9 +31,10 @@ class Battleship:
         print("     in game     ")
         print("   Battleship    ")
         print("-----------------")
-        print("input format: x y")
-        print("  x - row number ")
-        print("  y - col number ")
+        print("   input format: ")
+        print("      row col    ")
+        print(" row = number 1-6 ")
+        print(" col = number 1-6")
         print("-----------------\n")
 
     def draw_fields(self, player: Gamer) -> None:
@@ -98,13 +99,8 @@ class Battleship:
 
     @staticmethod
     def get_game_status(user_player: Gamer, ai_player: Gamer) -> str:
-        if all(map(lambda x: x.is_killed, [ship for ship in user_player.ships])):
+        if all((ship.is_killed for ship in user_player.ships)):
             return "AI WINS!"
-        if all(map(lambda x: x.is_killed, [ship for ship in ai_player.ships])):
+        if all((ship.is_killed for ship in ai_player.ships)):
             return "USER WINS!"
         return "Game not finished"
-
-
-if __name__ == "__main__":
-    game = Battleship()
-
