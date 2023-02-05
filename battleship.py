@@ -1,29 +1,33 @@
 import numpy as np
 
 from field import Field
-from gamers import Gamer, UserGamer, AIGamer
+from gamers import Gamer, Player
 from game_dataclasses import ShotCoordinates
 from exceptions import *
 
 
 class Battleship:
 
-    def __init__(self):
+    def __init__(self, player1: str, player2: str):
         # create field objects and ships in them:
-        self.user_field = Field()
-        self.user_field.generate_ships()
-        self.ai_field = Field()
-        self.ai_field.generate_ships()
+        self.player1_name = player1.upper()
+        self.player2_name = player2.upper()
+
+        self.player1_field = Field()
+        self.player1_field.generate_ships()
+
+        self.player2_field = Field()
+        self.player2_field.generate_ships()
 
     def create_players(self) -> tuple[Gamer, Gamer]:
         # create players
-        user_player = UserGamer(self.user_field)
-        ai_player = AIGamer(self.ai_field)
+        player1 = Player(self.player1_field, name=self.player1_name)
+        player2 = Player(self.player2_field, name=self.player2_name)
 
-        user_player.set_opponent(ai_player)
-        ai_player.set_opponent(user_player)
+        player1.set_opponent(player2)
+        player2.set_opponent(player1)
 
-        return user_player, ai_player
+        return player1, player2
 
     def greet(self) -> None:
         print("\n-----------------")
@@ -55,16 +59,13 @@ class Battleship:
         while True:
             try:
                 row, col = player.ask_coordinates()
-
-                if not (1 <= row <= 6 and 1 <= col <= 6):
-                    print("Coordinates should be from 1 to 6!")
-                    continue
-                if player.opponent.player_field[row - 1, col - 1] in ['X', '*', "■"]:
-                    print('This cell is already shot! Choose another one!')
-                    continue
                 return ShotCoordinates(row - 1, col - 1)
-            except ValueError:
-                print("You should enter 2 numbers!")
+            except CoordinatesException as e:
+                print(e)
+            except BusyCellOnFieldException as e:
+                print(e)
+            except InputTypeException as e:
+                print(e)
 
     @staticmethod
     def check_ship_is_live(coordinates: ShotCoordinates, opponent: Gamer) -> None:
