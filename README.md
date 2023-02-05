@@ -4,7 +4,7 @@ Battleship is a command line interface (CLI) game for two players.\
 When you launch game in CLI, you can select two players:
 * user - have to insert shot coordinates manually
 * easy_ai - always randomly select coordinates to shot 
-* medium_ai - randomly select coordinates to shot, but if ship is damaged, next shot is closely to previous one
+* medium_ai (not realised functionality, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shot is closely to previous one
 * hard_ai (not realised functionality, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shots will kill them  
 
 So, a pair of gamers looks like:
