@@ -1,11 +1,11 @@
 # Battleship
 ## Game description
 Battleship is a command line interface (CLI) game for two players.\
-When you launch game in CLI, you can select two players:
+When you launch game in CLI, you'll have to select two players from available variants:
 * user - have to insert shot coordinates manually
 * easy_ai - always randomly select coordinates to shot 
-* medium_ai (not realised functionality, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shot is closely to previous one
-* hard_ai (not realised functionality, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shots will kill them  
+* ~~medium_ai~~ (not realised, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shot is closely to previous one
+* ~~hard_ai~~ (not realised, coming soon) - randomly select coordinates to shot, but if ship is damaged, next shots will kill them  
 
 So, a pair of gamers looks like:
 * user - easy_ai 
@@ -25,4 +25,4 @@ Insert in command line following string with selected players.
 
 #### Example:  
 cd /way_to_folder_with_main.py \
-python3 main.py user medium_ai
+python main.py user medium_ai
