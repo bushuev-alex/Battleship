@@ -6,10 +6,10 @@ from game_dataclasses import ShipCoordinates
 class Ship:
 
     def __init__(self, length: int):
-        self.length = length
-        self.rotation = self.__set_ship_rotation()
-        self.coordinates = self.__set_ship_coordinates()
-        self.is_killed = False
+        self.length: int = length
+        self.rotation: str = self.__set_ship_rotation()
+        self.coordinates: ShipCoordinates = self.__set_ship_coordinates()
+        self.is_killed: bool = False
 
     def __set_ship_rotation(self) -> str:
         return random.choice(["horisontal", "vertical"]) if self.length > 1 else None
