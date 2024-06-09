@@ -3,14 +3,14 @@ import argparse
 
 
 my_parser = argparse.ArgumentParser()
-my_parser.add_argument("-p1", "--player", default="user",
+my_parser.add_argument("-p1", "--player_lvl", default="user",
                        help='Select from list [user/easy_ai/medium_ai/hard_ai]')
-my_parser.add_argument("-p2", "--opponent", default="medium_ai",
+my_parser.add_argument("-p2", "--opponent_lvl", default="medium_ai",
                        help='Select from list [user/easy_ai/medium_ai/hard_ai]')
 args = my_parser.parse_args()
 
 
-game = Battleship(args.player, args.opponent)
+game = Battleship(args.player_lvl, args.opponent_lvl)
 player_1, player_2 = game.create_players()
 
 player_to_move = player_1
